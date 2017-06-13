@@ -287,9 +287,9 @@
         self.headerAttributes[section] = headerAttributes;
     }
     
-    CGFloat leftInset = [self sectionInsetsInSection:section].left;
+	CGFloat leftInset = [self sectionInsetsInSection:section].left;
     CGFloat rightInset = [self sectionInsetsInSection:section].right;
-    CGFloat cellContentAreaWidth = CGRectGetWidth(self.collectionView.frame) - (leftInset + rightInset);
+    CGFloat cellContentAreaWidth = CGRectGetWidth(self.collectionView.frame) - (leftInset + rightInset + self.collectionView.contentInset.left + self.collectionView.contentInset.right);
     CGFloat numberOfGutters = numberOfColumns - 1;
     CGFloat singleGutterWidth = [self minimumInteritemSpacingInSection:section];
     CGFloat totalGutterWidth = singleGutterWidth * numberOfGutters;
@@ -393,6 +393,7 @@
 - (CGSize)collectionViewContentSize
 {
     CGSize contentSize = self.collectionView.bounds.size;
+	contentSize.width -=  (self.collectionView.contentInset.left + self.collectionView.contentInset.right);
     contentSize.height = [[[self allSectionHeights] valueForKeyPath:@"@sum.floatValue"] floatValue];
     return contentSize;
 }
