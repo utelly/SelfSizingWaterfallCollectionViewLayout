@@ -13,6 +13,8 @@
  */
 @interface SelfSizingWaterfallCollectionViewLayout : UICollectionViewLayout
 
+- (void)deleteCachedLayoutForIndexPath:(NSIndexPath *)indexPath;
+
 /**
  The margins used to lay out content in a section. Default: UIEdgeInsetsZero.
  */

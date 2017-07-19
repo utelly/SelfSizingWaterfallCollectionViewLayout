@@ -266,6 +266,23 @@
     }
 }
 
+- (void)deleteCachedLayoutForIndexPath:(NSIndexPath *)deleteIndexPath {
+	
+	NSMutableDictionary *newAttributes = [NSMutableDictionary dictionary];
+	
+	for (NSIndexPath *indexPath in self.preferredItemAttributes.allKeys) {
+		if (deleteIndexPath.section == indexPath.section) {
+			if (indexPath.item < deleteIndexPath.item) {
+				[newAttributes setObject:self.preferredItemAttributes[indexPath] forKey:indexPath];
+			} else if (indexPath.item > deleteIndexPath.item) {
+				[newAttributes setObject:self.preferredItemAttributes[indexPath] forKey:[NSIndexPath indexPathForItem:indexPath.item - 1 inSection:indexPath.section]];
+			}
+		}
+	}
+	
+	self.preferredItemAttributes = newAttributes;
+}
+
 - (void)prepareSection:(NSUInteger)section
 {
     NSUInteger numberOfColumns = [self numberOfColumnsInSection:section];
@@ -294,7 +311,7 @@
     CGFloat singleGutterWidth = [self minimumInteritemSpacingInSection:section];
     CGFloat totalGutterWidth = singleGutterWidth * numberOfGutters;
     CGFloat minimumLineSpacing = [self minimumLineSpacingInSection:section];
-    NSInteger itemCount = [self.collectionView numberOfItemsInSection:section];
+	NSInteger itemCount = [self.collectionView.dataSource collectionView:self.collectionView numberOfItemsInSection:section];
     CGFloat itemWidth = floorf((cellContentAreaWidth - totalGutterWidth) / numberOfColumns);
     
     for (NSUInteger item = 0; item < itemCount; item++) {
