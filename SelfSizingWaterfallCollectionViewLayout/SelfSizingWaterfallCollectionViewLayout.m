@@ -16,6 +16,7 @@
 @property (strong, nonatomic) NSMutableArray *footerAttributes;
 @property (strong, nonatomic) NSMutableDictionary *preferredItemAttributes;
 @property (strong, nonatomic) NSMutableDictionary *allItemAttributes;
+@property (assign, nonatomic) CGSize cachedContentSize;
 @property (nonatomic, readonly) NSUInteger numberOfSections;
 
 @end
@@ -71,7 +72,7 @@
 
 - (NSUInteger)numberOfSections
 {
-    return [self.collectionView.dataSource numberOfSectionsInCollectionView:self.collectionView];
+	return [self.collectionView numberOfSections];
 }
 
 - (void)setSectionInset:(UIEdgeInsets)sectionInsets
@@ -242,6 +243,11 @@
     for (NSInteger section = 0; section < self.numberOfSections; ++section) {
         [self prepareSection:section];
     }
+
+	CGSize cachedContentSize = self.collectionView.bounds.size;
+	cachedContentSize.width -=  (self.collectionView.contentInset.left + self.collectionView.contentInset.right);
+	cachedContentSize.height = [[[self allSectionHeights] valueForKeyPath:@"@sum.floatValue"] floatValue];
+	self.cachedContentSize = cachedContentSize;
 }
 
 - (void)resetColumnHeights
@@ -409,10 +415,7 @@
 
 - (CGSize)collectionViewContentSize
 {
-    CGSize contentSize = self.collectionView.bounds.size;
-	contentSize.width -=  (self.collectionView.contentInset.left + self.collectionView.contentInset.right);
-    contentSize.height = [[[self allSectionHeights] valueForKeyPath:@"@sum.floatValue"] floatValue];
-    return contentSize;
+	return self.cachedContentSize;
 }
 
 
